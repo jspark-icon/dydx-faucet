@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./built",
+    "allowJs": true,
+    "target": "es2022",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "preserveValueImports": false,
+    "module": "CommonJS"
+  },
+  "include": [ "./src/**/*" ]
+}
