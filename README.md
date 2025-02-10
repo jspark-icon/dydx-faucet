@@ -30,7 +30,8 @@ environment variable `CONFIG` for config file path (default as `config.json`).
     "defaultClientMemo": "faucet"
   },
   "faucetWallet": "merge panther lobster crazy road hollow amused security before critic about cliff exhibit cause coyote talent happy where lion river tobacco option coconut small",
-  "faucetNativeCoinWallet": "color habit donor nurse dinosaur stable wonder process post perfect raven gold census inside worth inquiry mammal panic olive toss shadow strong name drum"
+  "faucetNativeTokenWallet": "color habit donor nurse dinosaur stable wonder process post perfect raven gold census inside worth inquiry mammal panic olive toss shadow strong name drum",
+  "faucetNativeTokenAmount": 1
 }
 ```
 - `listenPort`: default as 9000
@@ -54,7 +55,8 @@ environment variable `CONFIG` for config file path (default as `config.json`).
   - `defaultClientMemo`: default as "faucet"
   - `useTimestampNonce`: optional
 - `faucetWallet`: mnemonic for USDC holder wallet, default as `merge panther lobster crazy road hollow amused security before critic about cliff exhibit cause coyote talent happy where lion river tobacco option coconut small`
-- `faucetNativeCoinWallet`: mnemonic for NativeCoin holder wallet, default as `color habit donor nurse dinosaur stable wonder process post perfect raven gold census inside worth inquiry mammal panic olive toss shadow strong name drum`
+- `faucetNativeTokenWallet`: mnemonic for NativeToken holder wallet, default as `color habit donor nurse dinosaur stable wonder process post perfect raven gold census inside worth inquiry mammal panic olive toss shadow strong name drum`
+- `faucetNativeTokenAmount`: amount of NativeToken faucet 
 
 ## run
 ### development

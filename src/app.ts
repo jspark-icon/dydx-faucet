@@ -41,7 +41,8 @@ interface Config {
     frontPathRegExp?: string
     validatorClient: ValidatorClientConfig
     faucetWallet?: string
-    faucetNativeCoinWallet?: string
+    faucetNativeTokenWallet?: string
+    faucetNativeTokenAmount?: number
 }
 
 const defaultConfig = {
@@ -60,7 +61,8 @@ const defaultConfig = {
         defaultClientMemo: 'faucet'
     },
     faucetWallet: "merge panther lobster crazy road hollow amused security before critic about cliff exhibit cause coyote talent happy where lion river tobacco option coconut small",
-    faucetNativeCoinWallet: "color habit donor nurse dinosaur stable wonder process post perfect raven gold census inside worth inquiry mammal panic olive toss shadow strong name drum"
+    faucetNativeTokenWallet: "color habit donor nurse dinosaur stable wonder process post perfect raven gold census inside worth inquiry mammal panic olive toss shadow strong name drum",
+    faucetNativeTokenAmount: 1
 }
 
 function loadConfig(): Config {
@@ -115,9 +117,13 @@ function loadConfig(): Config {
         console.log(`faucetWallet uses default value:${defaultConfig.faucetWallet}`);
         config.faucetWallet = defaultConfig.faucetWallet;
     }
-    if (!(config.faucetNativeCoinWallet)) {
-        console.log(`faucetNativeCoinWallet uses default value:${defaultConfig.faucetNativeCoinWallet}`);
-        config.faucetNativeCoinWallet = defaultConfig.faucetNativeCoinWallet;
+    if (!(config.faucetNativeTokenWallet)) {
+        console.log(`faucetNativeTokenWallet uses default value:${defaultConfig.faucetNativeTokenWallet}`);
+        config.faucetNativeTokenWallet = defaultConfig.faucetNativeTokenWallet;
+    }
+    if (!(config.faucetNativeTokenAmount)) {
+        console.log(`faucetNativeTokenAmount uses default value:${defaultConfig.faucetNativeTokenAmount}`);
+        config.faucetNativeTokenAmount = defaultConfig.faucetNativeTokenAmount;
     }
     return config;
 }
@@ -133,7 +139,7 @@ function getLogStream(logFile: string) {
 const config = loadConfig();
 let validatorClient;
 let faucetWallet;
-let faucetNativeCoinWallet;
+let faucetNativeTokenWallet;
 Promise.resolve(ensureClient()).then(r => console.log("initialized"));
 async function ensureClient() {
     if (!validatorClient) {
@@ -151,8 +157,8 @@ async function ensureClient() {
     if (!faucetWallet) {
         faucetWallet = await LocalWallet.fromMnemonic(config.faucetWallet, BECH32_PREFIX);
     }
-    if (!faucetNativeCoinWallet) {
-        faucetNativeCoinWallet = await LocalWallet.fromMnemonic(defaultConfig.faucetNativeCoinWallet, BECH32_PREFIX);
+    if (!faucetNativeTokenWallet) {
+        faucetNativeTokenWallet = await LocalWallet.fromMnemonic(defaultConfig.faucetNativeTokenWallet, BECH32_PREFIX);
     }
 }
 
@@ -189,10 +195,11 @@ interface FaucetTokensRequest {
     amount: number
 }
 
+const usdcDecimal = Math.pow(10, config.validatorClient.denomConfig.USDC_DECIMALS);
 app.post('/faucet/tokens', asyncHandler(async (req: Request, res: Response) => {
     await ensureClient();
     const body = req.body as FaucetTokensRequest;
-    const amount = body.amount * 1000000;
+    const amount = body.amount * usdcDecimal;
     const subaccount = new SubaccountInfo(faucetWallet, 0);
     // const transferTx = await validatorClient.post.sendToken(
     //     subaccount,
@@ -232,15 +239,16 @@ interface FaucetNativeTokenRequest {
     address: string
 }
 
+const nativeTokenDecimal = "0".repeat(config.validatorClient.denomConfig.CHAINTOKEN_DECIMALS);
 app.post('/faucet/native-token', asyncHandler(async (req: Request, res: Response) => {
     await ensureClient();
     const body = req.body as FaucetNativeTokenRequest;
-    const subaccount = new SubaccountInfo(faucetNativeCoinWallet, 0);
+    const subaccount = new SubaccountInfo(faucetNativeTokenWallet, 0);
     const tx = await validatorClient.post.sendToken(
         subaccount,
         body.address,
         config.validatorClient.denomConfig.CHAINTOKEN_DENOM,
-        "200",
+        config.faucetNativeTokenAmount+nativeTokenDecimal,
         false,
         Method.BroadcastTxCommit);
     console.log(`tx{hash:${tx.hash} code:${tx.code}}`);
