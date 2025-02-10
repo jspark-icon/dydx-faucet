@@ -212,7 +212,7 @@ app.post('/faucet/tokens', asyncHandler(async (req: Request, res: Response) => {
 
     const recipient: SubaccountId = {
         owner: body.address,
-        number: 0,
+        number: body.subaccountNumber,
     };
     const msg: MsgDepositToSubaccount = {
         sender: subaccount.address,
